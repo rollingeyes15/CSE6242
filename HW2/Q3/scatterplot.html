@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+	<title>vyamsani3</title>
+    <head>
+        <meta charset="utf-8">
+        <title>Scatterplot</title>
+        <!-- <script type="text/javascript" src="../lib/d3.v5.min.js"></script> -->
+        <script src="../lib/d3.v5.min.js"></script>
+    </head>
+	<style type="text/css">
+ 			
+ 			 body {
+		        font: 10px sans-serif;
+		    }
+
+		    .axis path,
+		    .axis line {
+		        fill: none;
+		        stroke: #000;
+		        shape-rendering: crispEdges;
+		    }
+		 
+		    .point {
+		        fill: steelblue;
+		        stroke: #000;
+		    }
+
+			path {
+				fill: none;
+				/*stroke: #999;*/
+			}
+
+/*			symbol.red {
+				fill: none;
+				stroke: red;
+			}*/
+
+			/*.axis path,
+			.axis line {
+				fill: none;
+				stroke: black;
+				shape-rendering: crispEdges;
+			}
+			
+			.axis text {
+				font-family: sans-serif;
+				font-size:11px;
+			}
+
+			.point {
+		        fill: steelblue;
+		        shape-rendering: crispEdges;
+		        stroke: #000;
+    		}*/
+		
+	</style>
+	<body>
+        <script type="text/javascript">
+            // Your beautiful D3 code will go here
+
+            d3.csv("movies.csv")
+            	.then(function(data) {
+
+            		data.forEach(function(d) {
+            			d.WinsNoms = +d.WinsNoms,
+            			d.Rating = +d.Rating,
+            			d.Budget = +d.Budget,
+            			d.IsGoodRating = +d.IsGoodRating
+            		});
+
+			// console.log(data);
+
+			var margin = {top: 20, right: 20, bottom: 30, left: 40},
+   			width = 900 - margin.left - margin.right,
+    		height = 500 - margin.top - margin.bottom;
+
+    		var x = d3.scaleLinear().range([0, width]);
+			var y = d3.scaleLinear().range([height, 0]);
+
+	        var svg = d3.select("body").append("svg")
+					    .attr("width", width + margin.left + margin.right)
+					    .attr("height", height + margin.top + margin.bottom)
+					    .append("g")
+					    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+ 
+ 	// console.log([data.Rating, data.WinsNoms]);
+ 	var data1 = data.map(function(d) {
+ 			return [d.Rating, d.WinsNoms, d.IsGoodRating]
+ 		}
+ 	);
+
+
+
+ 	console.log(data1);
+
+ 	x.domain(d3.extent(data1, function(d) { return d[0]; })).nice();
+	y.domain(d3.extent(data1, function(d) { return d[1]; })).nice();
+    // Add the points!
+
+	// Add the x-axis.
+    svg.append("g")
+        // .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x));
+ 
+    // Add the y-axis.
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(d3.axisLeft(y));
+
+// console.log(data1)
+// console.log(x(5));
+
+
+    // svg.selectAll("point")
+    //     .data(data1)
+    //     .enter().append("point")
+    //     // .attr("class", "point")
+    //     // .attr("d", d3.symbol().type(d3.symbolCircle))
+    //     .attr("d", pathData)
+    //     .attr("transform", function(d) { return "translate(" + x(d[0]) + "," + y(d[1]) + ")"; })
+    //     ;
+    // var circles = svg.selectAll("circle")
+			 //    .data(data1)
+			 //    .enter()
+			 //    .append("circle")
+			 //    // ;
+
+			 //    // circles
+			 //    .attr("transform", function(d) { return "translate(" + x(d[0]) + "," + y(d[1]) + ")"; })
+			 // d3.select('path')
+			 // 	.attr('d', pathData);
+		    function getStroke(d) { 
+		    		
+		    		if (rxScale(d[0]) > avg_x) {
+						return "blue";
+					} else {
+						return "green";
+					}							    		
+		    }
+
+	// var symbols_array = ['symbolCross', 'symbolCircle'];
+	var symbolGenerator = d3.symbol()
+	  // .type(d3.symbolCross)
+	  .size(15);
+
+	// var pathData = symbolGenerator();
+
+	function getSymbol(d) {
+		var sym;
+		if (!d[2]) {
+			// sym = d3.symbol().type(d3.symbolCross);
+			return d3.symbolCircle;
+		} else {
+			// sym = d3.symbol().type(d3.symbolCircle);
+			return d3.symbolCross;
+		}
+		// console.log(sym);
+		// return sym.size(10);
+	}
+
+
+	d3.select('g')
+	.selectAll('path')
+	.data(data1)
+	.enter()
+	.append('path')
+	.attr("stroke", function(d){return d[2] ? "blue":"red"})
+	// .attr("class", function(d) { return "" + d[2]; })
+
+	.attr('transform', function(d) {
+		return "translate(" + x(d[0]) + "," + y(d[1]) + ")"; 
+	})
+	.attr('d', function(d) {
+		// return symbolGenerator.type(d3[symbols_array[d[2]]]);
+		// var sym = return (d[2] ? d3.symbolCircle : d3.symbolCross);
+		// console.log(sym);
+		// var sym;
+		// if (d[2]) {
+		// 	sym = d3.symbol().type(d3.symbolCross);
+		// } else {
+		// 	sym = d3.symbol().type(d3.symbolCircle);
+		// }
+		// // console.log(sym);
+		// return sym.size(10);
+			symbolGenerator
+				.type(getSymbol(d))
+				// .type(d3.symbolCross);
+
+		return symbolGenerator(d);
+	});
+
+    // var labels = svg.selectAll("text")
+			 // 		.data(data1)
+			 // 		.enter()
+			 // 		.append("text")
+			 // 		.text("P")
+			 // 		.attr("transform", function(d) { return "translate(" + x(d[0]) + "," + y(d[1]) + ")";})
+			 // 		;
+
+
+});
+
+
+        </script>
+    </body>
+	
+</html>     
