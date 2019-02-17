@@ -1,0 +1,6 @@
+Average Node Degree: It is the average of the number of connections per node across the entire network.
+
+Diameter of the graph: If we were to put the entire network in a ball, the diameter of the graph would be the diameter of the ball. It is simply the shortest linear distance between the two outermost nodes of the network.
+
+Average path length: The sum of all lengths possible between any two nodes divided by the total number of connections in the network.
+

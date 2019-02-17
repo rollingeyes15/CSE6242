@@ -1,0 +1,5 @@
+c.i.a) 47 returned true
+c.i.b) 5 additional columns got created
+c.ii) 562 clusters using "Key collison" method under "metaphone3" keying function
+c.iv) if(isNull(value), "Unbranded", value)
+c.v) if(or(or(toLowercase(value).contains("discount"), toLowercase(value).contains("sale")), toLowercase(value).contains("offer")), 1, 0)
