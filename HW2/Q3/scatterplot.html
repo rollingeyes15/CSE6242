@@ -54,11 +54,13 @@
     		}*/
 		
 	</style>
+	<div id="area1"></div>
+	<div id="area2"></div>
 	<body>
         <script type="text/javascript">
             // Your beautiful D3 code will go here
 
-            d3.csv("movies.csv")
+            var data = d3.csv("movies.csv")
             	.then(function(data) {
 
             		data.forEach(function(d) {
@@ -67,69 +69,69 @@
             			d.Budget = +d.Budget,
             			d.IsGoodRating = +d.IsGoodRating
             		});
-
-			var margin = {top: 30, right: 150, bottom: 30, left: 40},
+            		});
+(function(){
+	var margin = {top: 30, right: 150, bottom: 30, left: 80},
    			width = 900 - margin.left - margin.right,
     		height = 500 - margin.top - margin.bottom;
 
     		var x = d3.scaleLinear().range([0, width]);
 			var y = d3.scaleLinear().range([height, 0]);
+			var y2 = d3.scaleLinear().range([margin.bottom+height, 2*margin.bottom]);
 
 	        var svg = d3.select("body").append("svg")
 					    .attr("width", width + margin.left + margin.right)
-					    .attr("height", height + margin.top + margin.bottom)
+					    .attr("height", 2*(height + margin.top + margin.bottom))
 					    .append("g")
 					    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
  	var data1 = data.map(function(d) {
- 			return [d.Rating, d.WinsNoms, d.IsGoodRating]
+ 			return [d.Rating, d.WinsNoms, d.Budget, d.IsGoodRating]
  		}
  	);
-
-
 
  	console.log(data1);
 
  	x.domain(d3.extent(data1, function(d) { return d[0]; })).nice();
 	y.domain(d3.extent(data1, function(d) { return d[1]; })).nice();
+	y2.domain(d3.extent(data1, function(d) { return d[2]; })).nice();
 
-
-	// Add the x-axis.
+	// Add the x-axes.
     svg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x))
+        .call(d3.axisBottom(x));
 
-        ;
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + (2*height +margin.bottom) + ")")
+        .call(d3.axisBottom(x));
  
-    // Add the y-axis.
+    // Add the y-axes.
     svg.append("g")
         .attr("class", "y axis")
-        .call(d3.axisLeft(y))
-        .append("text")
-	      // .attr("class", "label")
-	      // this doesn't work for labels, not sure why
-	      .attr("transform", "rotate(-90)")
-	      .attr("y", 60)
-	      .attr("dy", ".71em")
-	      .style("text-anchor", "end")
-	      .text("Protein (g)");
-        ;
+        .call(d3.axisLeft(y));
+
+    svg.append("g")
+        .attr("class", "y axis")
+        .attr("transform", "translate(0," + 1*height + ")")
+        .call(d3.axisLeft(y2));
+
 
 	var symbolGenerator = d3.symbol()
 	  						.size(15);
 
 	function getSymbol(d) {
-		return d[2] ? d3.symbolCross : d3.symbolCircle;
+		return d[3] ? d3.symbolCross : d3.symbolCircle;
 	}
 
     // Add the points!
-	d3.select('g')
+	d3.select("g")
 	.selectAll('path')
 	.data(data1)
 	.enter()
 	.append('path')
-	.attr("stroke", function(d){return d[2] ? "blue":"red"})
+	.attr("stroke", function(d){return d[3] ? "blue":"red"})
 	.attr('transform', function(d) {
 		return "translate(" + x(d[0]) + "," + y(d[1]) + ")"; 
 	})
@@ -137,6 +139,24 @@
 			symbolGenerator.type(getSymbol(d));
 			return symbolGenerator();
 	});
+
+
+	//
+	d3.select('#area2')
+		.selectAll('path')
+		.data(data1)
+		.enter()
+		.append('path')
+		// .attr("stroke", function(d){return d[3] ? "blue":"red"})
+		.attr("stroke", "green")
+		.attr('transform', function(d) {
+			return "translate(" + x(d[2]) + "," + y2(d[1]) + ")"; 
+		})
+		.attr('d', function(d) {
+				symbolGenerator.type(getSymbol(d));
+				return symbolGenerator();
+		});
+	//
 
 	var legendData = [["bad rating", "red", "circle"], ["good rating", "blue", "cross"]];
 
@@ -200,7 +220,11 @@
       .attr("transform", "rotate(-90)")
       .style("text-anchor", "end")
       .text("Wins+Noms");
-});
+
+
+
+})();
+			
 
 
         </script>
