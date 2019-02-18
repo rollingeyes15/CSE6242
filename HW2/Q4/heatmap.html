@@ -72,16 +72,7 @@
 // 		.text(selectValue + ' is the last selected option.')
 // };
 
-//     var locationMenu = d3.select("#locationDropdown");
-//     locationMenu
-//       .append("select")
-//       .attr("id", "locationMenu")
-//       .selectAll("option")
-//         .data(data)
-//         .enter()
-//         .append("option")
-//         .attr("value", function(d, i) { return i; })
-//         .text(function(d) { return d; });
+
 
 			var long_data = [];
             var dataset = d3.csv("heatmap.csv")
@@ -108,44 +99,11 @@
 
             var l = long_data.length;
             console.log(l);
-   //          <!--
-   //           var long_data = [];
-   //          for(var i = 0; i<dataset.length; i++){
-   //          	var row = dataset[i];
-   //          	console.log(row);
-   //          	long_data.push( {"Type": row["Type"], "Borough": "Bronx", "Count": row["Bronx"], "Year": row["Year"]});
-			//     long_data.push( {"Type": row["Type"], "Borough": "Brooklyn", "Count": row["Brooklyn"], "Year": row["Year"]});
-			//     long_data.push( {"Type": row["Type"], "Borough": "Manhattan", "Count": row["Manhattan"], "Year": row["Year"]});
-			//     long_data.push( {"Type": row["Type"], "Borough": "Queens", "Count": row["Queens"], "Year": row["Year"]});
-			//     long_data.push( {"Type": row["Type"], "Borough": "Staten Island", "Count": row["Staten"], "Year": row["Year"]});
-   //          }
-
-           
-			// dataset.then(function(row1){
-			// 	return Promise.all(row1.map(function(row){
-			// 			long_data.push( {"Type": row["Type"], "Borough": "Bronx", "Count": row["Bronx"], "Year": row["Year"]});
-			//     long_data.push( {"Type": row["Type"], "Borough": "Brooklyn", "Count": row["Brooklyn"], "Year": row["Year"]});
-			//     long_data.push( {"Type": row["Type"], "Borough": "Manhattan", "Count": row["Manhattan"], "Year": row["Year"]});
-			//     long_data.push( {"Type": row["Type"], "Borough": "Queens", "Count": row["Queens"], "Year": row["Year"]});
-			//     long_data.push( {"Type": row["Type"], "Borough": "Staten Island", "Count": row["Staten"], "Year": row["Year"]});
-			// 	}));
-
-
-			//     // long_data.push( {"Type": row["Type"], "Borough": "Bronx", "Count": row["Bronx"], "Year": row["Year"]});
-			//     // long_data.push( {"Type": row["Type"], "Borough": "Brooklyn", "Count": row["Brooklyn"], "Year": row["Year"]});
-			//     // long_data.push( {"Type": row["Type"], "Borough": "Manhattan", "Count": row["Manhattan"], "Year": row["Year"]});
-			//     // long_data.push( {"Type": row["Type"], "Borough": "Queens", "Count": row["Queens"], "Year": row["Year"]});
-			//     // long_data.push( {"Type": row["Type"], "Borough": "Staten Island", "Count": row["Staten"], "Year": row["Year"]});
-			//   });
-			// -->
-
-
-
-            console.log(long_data);
-            console.log(long_data[2].Count);
-			var margin = {top: 30, right: 150, bottom: 30, left: 80},
-   			width = 900 - margin.left - margin.right,
-    		height = 500 - margin.top - margin.bottom;
+            // console.log(long_data);
+            // console.log(long_data[2].Count);
+			var margin = {top: 50, right: 0, bottom: 100, left: 100},
+   			width = 400 - margin.left - margin.right,
+    		height = 400 - margin.top - margin.bottom;
 
     		
     		var colors = ["#ffffcc", "#ffeda0", "#fed976", "#feb24c", "#fd8d3c", "#fc4e2a", "#e31a1c", "#bd0026", "#800026"]; // colorbrewer.YlOrRd[9]
@@ -166,14 +124,21 @@
 			var types = long_data.map(function(d) {return d.Type;}).sort().filter(function(item, pos, ary) {
 										        return !pos || item != ary[pos - 1];
 										    });
-			console.log(types);
-			console.log(types.length);
+			// console.log(types);
+			// console.log(types.length);
 
 			var boroughs = long_data.map(function(d) {return d.Borough;}).sort().filter(function(item, pos, ary) {
 										        return !pos || item != ary[pos - 1];
 										    });
-			console.log(boroughs);
+
+			var years = long_data.map(function(d) {return d.Year;}).sort().filter(function(item, pos, ary) {
+							        return !pos || item != ary[pos - 1];
+							    });
+			var by_year
+			// console.log(years);
+			// console.log(boroughs);
 			var gridSize = Math.floor(width / types.length);
+			console.log("gridSize = " + gridSize);
 
 			var yLabels = svg.selectAll(".yLabel")
 					          .data(boroughs)
@@ -182,20 +147,105 @@
 					            .attr("x", 0)
 					            .attr("y", function (d, i) { return i * gridSize; })
 					            .style("text-anchor", "end")
-					            .attr("transform", "translate(-6," + gridSize / 1.5 + ")")
+					            .attr("transform", "translate(-6," + gridSize / 1.5 + ")");
+			var xLabels = svg.selectAll(".xLabel")
+						          .data(types)
+						          .enter().append("text")
+						            .text(function(d) { return d; })
+						            .attr("y", function(d, i) { return i * gridSize + gridSize/2; })
+						            .attr("x", -height)
+						            .style("text-anchor", "end")
+						            // .attr("transform", "translate(" + gridSize / 2 + ", -6)")
+						            .attr("transform", "rotate(-90)")
+						            ;
+
+    var locationMenu = d3.select("#locationDropdown");
+    locationMenu
+      .append("select")
+      .attr("id", "locationMenu")
+      .selectAll("option")
+        .data(years)
+        .enter()
+        .append("option")
+        .attr("value", function(d, i) { return i; })
+        .text(function(d) { return d; });
+
+    locationMenu.on("change", function() {
+      // find which location was selected from the dropdown
+      var selectedYearIndex = d3.select(this)
+        .select("select")
+        .property("value");
+        console.log(selectedYearIndex);
+
+      var dataByYear = getDataByYear(selectedYearIndex);
+      console.log(dataByYear);
+    }); 
+
+    function getDataByYear(idx = 0) {
+    	var temp =  long_data
+    			.filter(function(d) {
+			    		if (d.Year == years[idx]){ return d; }
+			    	});
+    			// console.log(temp);
+    			return temp;
+    }
+
+
 			
 			var yStep = 100;
 			var xStep = 100;
+			
+			// console.log(x("Assault"));
+			// console.log(y);
+			function getMaxCount(year) {
+				var idx = +year - years[0];
+				var dataForCurrentYear = getDataByYear(idx);
+				return d3.max(dataForCurrentYear, function(d) {
+					return d.Count;
+				});
+			}
+
+			var maxCountsArray = years.map(function(d, i){
+				return getMaxCount(years[i]);
+			});
+			// console.log
+			console.log(maxCountsArray);
+			function getMaxCountInYear(year) {
+				return maxCountsArray[+year - years[0]];
+			}
+
+			console.log(getMaxCountInYear(2012));
+			console.log(getMaxCountInYear(2015));
+			
+
+			function colorScale(row) {
+				var year = row.Year;
+				var maxForCurrentYear = getMaxCountInYear(year);
+				return d3.scaleLinear()
+							  	.domain(d3.range(0, maxForCurrentYear, 1))
+							  	.range(colors);
+			}
+			// linear color scale
+			var colorScale = 
+
+		  	console.log(colorScale);
+
 			svg.selectAll(".tile")
-			      .data(long_data)
+			      .data(getDataByYear(0))
 			    	.enter().append("rect")
 			      .attr("class", "tile")
-			      .attr("x", function(d) { return x(d.Type); })
-			      .attr("y", function(d) { return y(d.Borough); })
-			      .attr("width", x(xStep) - x(0))
-			      .attr("height",  y(0) - y(yStep))
-			      .style("fill", function(d) { return z(d.Count); });
+			      .attr("x", function(d, i) { return i * gridSize; })
+			      .attr("y", function(d, i) { return i * gridSize; })
+			      .attr("class", "hour bordered")
+			      .attr("width", gridSize)
+			      .attr("height",  gridSize)
+			      .style("stroke", "white")
+			      .style("stroke-opacity", 0.6)
+			      .style("fill", function(d) { return colorScale(d); });
 
+			console.log(colorScale(16));
+
+			console.log(colorScale(5));
  	// var data1 = data.map(function(d) {
  	// 		return [d.Rating, d.WinsNoms, d.Budget, d.IsGoodRating]
  	// 	}
