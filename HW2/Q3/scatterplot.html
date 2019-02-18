@@ -68,9 +68,7 @@
             			d.IsGoodRating = +d.IsGoodRating
             		});
 
-			// console.log(data);
-
-			var margin = {top: 20, right: 20, bottom: 30, left: 40},
+			var margin = {top: 30, right: 150, bottom: 30, left: 40},
    			width = 900 - margin.left - margin.right,
     		height = 500 - margin.top - margin.bottom;
 
@@ -83,9 +81,6 @@
 					    .append("g")
 					    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-
- 
- 	// console.log([data.Rating, data.WinsNoms]);
  	var data1 = data.map(function(d) {
  			return [d.Rating, d.WinsNoms, d.IsGoodRating]
  		}
@@ -97,110 +92,96 @@
 
  	x.domain(d3.extent(data1, function(d) { return d[0]; })).nice();
 	y.domain(d3.extent(data1, function(d) { return d[1]; })).nice();
-    // Add the points!
+
 
 	// Add the x-axis.
     svg.append("g")
-        // .attr("class", "x axis")
+        .attr("class", "x axis")
         .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x));
+        .call(d3.axisBottom(x))
+.append("text")
+      // .attr("class", "label")
+      .attr("x", width/2)
+      .attr("y", height/2)
+      .style("text-anchor", "end")
+      .text("Calories");
+        ;
  
     // Add the y-axis.
     svg.append("g")
         .attr("class", "y axis")
-        .call(d3.axisLeft(y));
+        .call(d3.axisLeft(y))
+        .append("text")
+	      // .attr("class", "label")
+	      // this doesn't work for labels, not sure why
+	      .attr("transform", "rotate(-90)")
+	      .attr("y", 60)
+	      .attr("dy", ".71em")
+	      .style("text-anchor", "end")
+	      .text("Protein (g)");
+        ;
 
-// console.log(data1)
-// console.log(x(5));
-
-
-    // svg.selectAll("point")
-    //     .data(data1)
-    //     .enter().append("point")
-    //     // .attr("class", "point")
-    //     // .attr("d", d3.symbol().type(d3.symbolCircle))
-    //     .attr("d", pathData)
-    //     .attr("transform", function(d) { return "translate(" + x(d[0]) + "," + y(d[1]) + ")"; })
-    //     ;
-    // var circles = svg.selectAll("circle")
-			 //    .data(data1)
-			 //    .enter()
-			 //    .append("circle")
-			 //    // ;
-
-			 //    // circles
-			 //    .attr("transform", function(d) { return "translate(" + x(d[0]) + "," + y(d[1]) + ")"; })
-			 // d3.select('path')
-			 // 	.attr('d', pathData);
-		    function getStroke(d) { 
-		    		
-		    		if (rxScale(d[0]) > avg_x) {
-						return "blue";
-					} else {
-						return "green";
-					}							    		
-		    }
-
-	// var symbols_array = ['symbolCross', 'symbolCircle'];
 	var symbolGenerator = d3.symbol()
-	  // .type(d3.symbolCross)
-	  .size(15);
-
-	// var pathData = symbolGenerator();
+	  						.size(15);
 
 	function getSymbol(d) {
-		var sym;
-		if (!d[2]) {
-			// sym = d3.symbol().type(d3.symbolCross);
-			return d3.symbolCircle;
-		} else {
-			// sym = d3.symbol().type(d3.symbolCircle);
-			return d3.symbolCross;
-		}
-		// console.log(sym);
-		// return sym.size(10);
+		return d[2] ? d3.symbolCross : d3.symbolCircle;
 	}
 
-
+    // Add the points!
 	d3.select('g')
 	.selectAll('path')
 	.data(data1)
 	.enter()
 	.append('path')
 	.attr("stroke", function(d){return d[2] ? "blue":"red"})
-	// .attr("class", function(d) { return "" + d[2]; })
-
 	.attr('transform', function(d) {
 		return "translate(" + x(d[0]) + "," + y(d[1]) + ")"; 
 	})
 	.attr('d', function(d) {
-		// return symbolGenerator.type(d3[symbols_array[d[2]]]);
-		// var sym = return (d[2] ? d3.symbolCircle : d3.symbolCross);
-		// console.log(sym);
-		// var sym;
-		// if (d[2]) {
-		// 	sym = d3.symbol().type(d3.symbolCross);
-		// } else {
-		// 	sym = d3.symbol().type(d3.symbolCircle);
-		// }
-		// // console.log(sym);
-		// return sym.size(10);
-			symbolGenerator
-				.type(getSymbol(d))
-				// .type(d3.symbolCross);
-
-		return symbolGenerator(d);
+			symbolGenerator.type(getSymbol(d));
+			return symbolGenerator();
 	});
 
-    // var labels = svg.selectAll("text")
-			 // 		.data(data1)
-			 // 		.enter()
-			 // 		.append("text")
-			 // 		.text("P")
-			 // 		.attr("transform", function(d) { return "translate(" + x(d[0]) + "," + y(d[1]) + ")";})
-			 // 		;
+	var legendData = [["bad rating", "red", "circle"], ["good rating", "blue", "cross"]];
 
+	svg.selectAll('.symbol')
+     .data(legendData)
+     .enter()
+     .append('path')
+     .attr('transform', function(d, i) {
+       return 'translate(' + (width) + ',' + ((i * 20) + 10) + ')';
+     })
+     .attr('d', d3.symbol().type(function(d, i) {
+         if (d[2] === "circle") {
+           return d3.symbolCircle;
+         } else if (d[2] === "cross") {
+           return d3.symbolCross;
+         } 
+       })
+       .size(25))
+     .style("stroke", function(d) {
+       return d[1];
+     });
 
+   svg.selectAll('.label')
+     .data(legendData)
+     .enter()
+     .append('text')
+     .attr("x", width + 7.5)
+     .attr("y", function(d, i){ return ((i * 20) + 12.5);})
+     .text(function(d) {
+       return d[0];
+     });
+
+			svg.append("text")
+				.attr("x", (width/2 - margin.right))
+				.attr("y", 0)
+				.attr("text-anchor", "middle")
+				.attr("font-family", "helvetica")
+				.attr("font-size", "12px")
+				.attr("font-weight", "bold")
+				.text("Wins+Nominations vs. Rating");
 });
 
 
