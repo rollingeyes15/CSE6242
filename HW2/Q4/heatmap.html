@@ -5,7 +5,7 @@
 	        <meta charset="utf-8">
 	        <title>heatmap</title>
 	        <script src="../lib/d3.v5.min.js"></script>
-	        <script src="https://d3js.org/colorbrewer.v1.min.js"></script>
+	        <!-- <script src="https://d3js.org/colorbrewer.v1.min.js"></script> -->
 	        <style type="text/css">
 				html { 
 				      font-size: 62.5%; 
@@ -103,7 +103,8 @@
 	    		
 	    		// var colors = ["#ffffcc", "#ffeda0", "#fed976", "#feb24c", "#fd8d3c", "#fc4e2a", "#e31a1c", "#bd0026", "#800026"]; // colorbrewer.YlOrRd[9]
 	    		// var colors = colorbrewer.YlOrRd[9];
-	    		var colors = colorbrewer.RdPu[9];
+	    		// var colors = colorbrewer.RdPu[9];
+	    		var colors = d3.schemeRdPu[9];
 
 	    		var x = d3.scaleLinear().range([0, width]);
 				var y = d3.scaleLinear().range([height, 0]);
