@@ -1,390 +1,300 @@
-<!DOCTYPE html>
-<html lang="en">
-	<title>vyamsani3</title>
-    <head>
-        <meta charset="utf-8">
-        <title>heatmap</title>
-        <script src="../lib/d3.v5.min.js"></script>
-        <style type="text/css">
-			html { 
-			      font-size: 62.5%; 
-			    } 
-			    
-			    body {
-			      margin-top: 30px;
-			      font-size: 1.4rem;
-			      font-family: 'Source Sans Pro', sans-serif;
-			      font-weight: 400;
-			      fill: #696969;
-			      text-align: center;
-			    }
-			    
-			    .timeLabel, .dayLabel {
-					    font-size: 1.6rem;
-					    fill: #AAAAAA;
-					    font-weight: 300;
-					}
+	<!DOCTYPE html>
+	<html lang="en">
+		<title>vyamsani3</title>
+	    <head>
+	        <meta charset="utf-8">
+	        <title>heatmap</title>
+	        <script src="../lib/d3.v5.min.js"></script>
+	        <script src="https://d3js.org/colorbrewer.v1.min.js"></script>
+	        <style type="text/css">
+				html { 
+				      font-size: 62.5%; 
+				    } 
+				    
+				    body {
+				      margin-top: 30px;
+				      font-size: 1.4rem;
+				      font-family: 'Source Sans Pro', sans-serif;
+				      font-weight: 400;
+				      fill: #696969;
+				      text-align: center;
+				    }
+				    
+				    .timeLabel, .dayLabel {
+						    font-size: 1.6rem;
+						    fill: #AAAAAA;
+						    font-weight: 300;
+						}
 
-			    #nav-container {
-			      display: flex;
-			      justify-content: center;
-			      cursor: pointer;
-			    }
+				    #nav-container {
+				      display: flex;
+				      justify-content: center;
+				      cursor: pointer;
+				    }
 
-			    #nav-container .left {
-			      margin-right: 20px;
-			    }
+				    #nav-container .left {
+				      margin-right: 20px;
+				    }
 
-			    #nav-container .right {
-			      margin-left: 20px;
-			    }
+				    #nav-container .right {
+				      margin-left: 20px;
+				    }
+			
+			</style>
+	    </head>
 		
-		</style>
-    </head>
-	
-	<body>
-		<div id="nav-container">
-		    <div class="nav left">left</div>
-		    <div id="locationDropdown"></div>
-		    <div class="nav right">right</div>
-		</div>
-<div id="heatmap"></div>
-        <script type="text/javascript">
-            // Your beautiful D3 code will go here
+		<body>
+			<div id="nav-container">
+			    <div class="nav left">left</div>
+			    <div id="locationDropdown"></div>
+			    <div class="nav right">right</div>
+			</div>
+	<div id="heatmap"></div>
+	        <script type="text/javascript">
+	            // Your beautiful D3 code will go here
 
-//             var data = ["Option 1", "Option 2", "Option 3"];
+	//             var data = ["Option 1", "Option 2", "Option 3"];
 
-// var select = d3.select('body')
-//   .append('select')
-//   	.attr('class','select')
-//     .on('change',onchange)
+	// var select = d3.select('body')
+	//   .append('select')
+	//   	.attr('class','select')
+	//     .on('change',onchange)
 
-// var options = select
-//   .selectAll('option')
-// 	.data(data).enter()
-// 	.append('option')
-// 		.text(function (d) { return d; });
+	// var options = select
+	//   .selectAll('option')
+	// 	.data(data).enter()
+	// 	.append('option')
+	// 		.text(function (d) { return d; });
 
-// function onchange() {
-// 	selectValue = d3.select('select').property('value')
-// 	d3.select('body')
-// 		.append('p')
-// 		.text(selectValue + ' is the last selected option.')
-// };
+	// function onchange() {
+	// 	selectValue = d3.select('select').property('value')
+	// 	d3.select('body')
+	// 		.append('p')
+	// 		.text(selectValue + ' is the last selected option.')
+	// };
 
+				var long_data = [];
+	            var dataset = d3.csv("heatmap.csv")
+	            	.then(function(row1) {
 
+	            		row1.forEach(function(d) {
+	            			d["Bronx"] = +d.Bronx,
+	            			d.Brooklyn = +d.Brooklyn,
+	            			d.Manhattan = +d.Manhattan,
+	            			d.Queens = +d.Queens,
+	            			d["Staten"]= +d["Staten Island"],
+	            			d["Type"] = d["Crime Type"],
+	            			d.Year = +d.Year
 
-			var long_data = [];
-            var dataset = d3.csv("heatmap.csv")
-            	.then(function(row1) {
+	            	})
+	            		row1.forEach(function(row) {
+	            			long_data.push( {"Type": row["Type"], "Borough": "Bronx", "Count": row["Bronx"], "Year": row["Year"]});
+						    long_data.push( {"Type": row["Type"], "Borough": "Brooklyn", "Count": row["Brooklyn"], "Year": row["Year"]});
+						    long_data.push( {"Type": row["Type"], "Borough": "Manhattan", "Count": row["Manhattan"], "Year": row["Year"]});
+						    long_data.push( {"Type": row["Type"], "Borough": "Queens", "Count": row["Queens"], "Year": row["Year"]});
+						    long_data.push( {"Type": row["Type"], "Borough": "Staten Island", "Count": row["Staten"], "Year": row["Year"]});
+	            		})
+	            		;
 
-            		row1.forEach(function(d) {
-            			d["Bronx"] = +d.Bronx,
-            			d.Brooklyn = +d.Brooklyn,
-            			d.Manhattan = +d.Manhattan,
-            			d.Queens = +d.Queens,
-            			d["Staten"]= +d["Staten Island"],
-            			d["Type"] = d["Crime Type"],
-            			d.Year = +d.Year
+	            var l = long_data.length;
+				var margin = {top: 50, right: 0, bottom: 100, left: 100},
+	   			width = 400 - margin.left - margin.right,
+	    		height = 400 - margin.top - margin.bottom;
+	    		
+	    		// var colors = ["#ffffcc", "#ffeda0", "#fed976", "#feb24c", "#fd8d3c", "#fc4e2a", "#e31a1c", "#bd0026", "#800026"]; // colorbrewer.YlOrRd[9]
+	    		// var colors = colorbrewer.YlOrRd[9];
+	    		var colors = colorbrewer.RdPu[9];
 
-            	})
-            		row1.forEach(function(row) {
-            			long_data.push( {"Type": row["Type"], "Borough": "Bronx", "Count": row["Bronx"], "Year": row["Year"]});
-					    long_data.push( {"Type": row["Type"], "Borough": "Brooklyn", "Count": row["Brooklyn"], "Year": row["Year"]});
-					    long_data.push( {"Type": row["Type"], "Borough": "Manhattan", "Count": row["Manhattan"], "Year": row["Year"]});
-					    long_data.push( {"Type": row["Type"], "Borough": "Queens", "Count": row["Queens"], "Year": row["Year"]});
-					    long_data.push( {"Type": row["Type"], "Borough": "Staten Island", "Count": row["Staten"], "Year": row["Year"]});
-            		})
-            		;
+	    		var x = d3.scaleLinear().range([0, width]);
+				var y = d3.scaleLinear().range([height, 0]);
+				var z = d3.scaleLinear().range(colors);
 
-            var l = long_data.length;
-            console.log(l);
-            // console.log(long_data);
-            // console.log(long_data[2].Count);
-			var margin = {top: 50, right: 0, bottom: 100, left: 100},
-   			width = 400 - margin.left - margin.right,
-    		height = 400 - margin.top - margin.bottom;
+				x.domain(d3.extent(long_data, function(d) { return d["Type"]; })).nice();
+				y.domain(d3.extent(long_data, function(d) { return d["Borough"]; })).nice();
+				z.domain([0, d3.max(long_data, function(d){return d["Count"];} )]);
 
-    		
-    		var colors = ["#ffffcc", "#ffeda0", "#fed976", "#feb24c", "#fd8d3c", "#fc4e2a", "#e31a1c", "#bd0026", "#800026"]; // colorbrewer.YlOrRd[9]
+		        var svg = d3.select("body").append("svg")
+						    .attr("width", width + margin.left + margin.right)
+						    .attr("height", height + margin.top + margin.bottom)
+						    .append("g")
+						    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+				var types = long_data.map(function(d) {return d.Type;}).sort().filter(function(item, pos, ary) {
+											        return !pos || item != ary[pos - 1];
+											    });
+				// console.log(types);
+				// console.log(types.length);
 
-    		var x = d3.scaleLinear().range([0, width]);
-			var y = d3.scaleLinear().range([height, 0]);
-			var z = d3.scaleLinear().range(colors);
+				var boroughs = long_data.map(function(d) {return d.Borough;}).sort().filter(function(item, pos, ary) {
+											        return !pos || item != ary[pos - 1];
+											    });
 
-			x.domain(d3.extent(long_data, function(d) { return d["Type"]; })).nice();
-			y.domain(d3.extent(long_data, function(d) { return d["Borough"]; })).nice();
-			z.domain([0, d3.max(long_data, function(d){return d["Count"];} )]);
+				var years = long_data.map(function(d) {return d.Year;}).sort().filter(function(item, pos, ary) {
+								        return !pos || item != ary[pos - 1];
+								    });
 
-	        var svg = d3.select("body").append("svg")
-					    .attr("width", width + margin.left + margin.right)
-					    .attr("height", height + margin.top + margin.bottom)
-					    .append("g")
-					    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-			var types = long_data.map(function(d) {return d.Type;}).sort().filter(function(item, pos, ary) {
-										        return !pos || item != ary[pos - 1];
-										    });
-			// console.log(types);
-			// console.log(types.length);
+				// console.log(years);
+				// console.log(boroughs);
+				var gridSize = Math.floor(width / types.length);
+				// console.log("gridSize = " + gridSize);
 
-			var boroughs = long_data.map(function(d) {return d.Borough;}).sort().filter(function(item, pos, ary) {
-										        return !pos || item != ary[pos - 1];
-										    });
+				var yLabels = svg.selectAll(".yLabel")
+						          	.data(boroughs)
+						        	.enter().append("text")
+						            .text(function (d) { return d; })
+						            .attr("x", 0)
+						            .attr("y", function (d, i) { return i * gridSize; })
+						            .style("text-anchor", "end")
+						            .attr("transform", "translate(-6," + gridSize / 1.5 + ")");
 
-			var years = long_data.map(function(d) {return d.Year;}).sort().filter(function(item, pos, ary) {
-							        return !pos || item != ary[pos - 1];
-							    });
-			var by_year
-			// console.log(years);
-			// console.log(boroughs);
-			var gridSize = Math.floor(width / types.length);
-			console.log("gridSize = " + gridSize);
-
-			var yLabels = svg.selectAll(".yLabel")
-					          .data(boroughs)
-					          .enter().append("text")
-					            .text(function (d) { return d; })
-					            .attr("x", 0)
-					            .attr("y", function (d, i) { return i * gridSize; })
-					            .style("text-anchor", "end")
-					            .attr("transform", "translate(-6," + gridSize / 1.5 + ")");
-			var xLabels = svg.selectAll(".xLabel")
-						          .data(types)
-						          .enter().append("text")
-						            .text(function(d) { return d; })
+				var xLabels = svg.selectAll(".xLabel")
+							        .data(types)
+							        .enter().append("text")
+								    .text(function(d) { return d; })
 						            .attr("y", function(d, i) { return i * gridSize + gridSize/2; })
-						            .attr("x", -height)
+						            .attr("x", -(height + 6))
 						            .style("text-anchor", "end")
 						            // .attr("transform", "translate(" + gridSize / 2 + ", -6)")
 						            .attr("transform", "rotate(-90)")
 						            ;
 
-    var locationMenu = d3.select("#locationDropdown");
-    locationMenu
-      .append("select")
-      .attr("id", "locationMenu")
-      .selectAll("option")
-        .data(years)
-        .enter()
-        .append("option")
-        .attr("value", function(d, i) { return i; })
-        .text(function(d) { return d; });
+			    var locationMenu = d3.select("#locationDropdown");
+			    
+			    locationMenu.append("select")
+					   		.attr("id", "locationMenu")
+					    	.selectAll("option")
+					        .data(years)
+					        .enter()
+					        .append("option")
+					        .attr("value", function(d, i) { return i; })
+					        .text(function(d) { return d; });
 
-    locationMenu.on("change", function() {
-      // find which location was selected from the dropdown
-      var selectedYearIndex = d3.select(this)
-        .select("select")
-        .property("value");
-        console.log(selectedYearIndex);
+			    locationMenu.on("change", function() {
+			      		// find which year was selected from the dropdown
+				      var selectedYearIndex = d3.select(this)
+				        .select("select")
+				        .property("value");
+				        // console.log(selectedYearIndex);
 
-      var dataByYear = getDataByYear(selectedYearIndex);
-      console.log(dataByYear);
-    }); 
+				      var dataByYear = getDataByYear(selectedYearIndex);
+				      // console.log(dataByYear);
+			    }); 
 
-    function getDataByYear(idx = 0) {
-    	var temp =  long_data
-    			.filter(function(d) {
-			    		if (d.Year == years[idx]){ return d; }
-			    	});
-    			// console.log(temp);
-    			return temp;
-    }
+			    function getDataByYear(idx = 0) {
+			    	var temp =  long_data
+			    			.filter(function(d) {
+						    		if (d.Year == years[idx]){ return d; }
+						    	});
+			    			return temp;
+			    }
 
+				function getMaxCount(year) {
+					var idx = +year - years[0];
+					var dataForCurrentYear = getDataByYear(idx);
+					return d3.max(dataForCurrentYear, function(d) {
+						return d.Count;
+					});
+				}
 
-			
-			var yStep = 100;
-			var xStep = 100;
-			
-			// console.log(x("Assault"));
-			// console.log(y);
-			function getMaxCount(year) {
-				var idx = +year - years[0];
-				var dataForCurrentYear = getDataByYear(idx);
-				return d3.max(dataForCurrentYear, function(d) {
-					return d.Count;
+				var maxCountsArray = years.map(function(d, i){
+					return getMaxCount(years[i]);
 				});
-			}
 
-			var maxCountsArray = years.map(function(d, i){
-				return getMaxCount(years[i]);
-			});
-			// console.log
-			console.log(maxCountsArray);
-			function getMaxCountInYear(year) {
-				return maxCountsArray[+year - years[0]];
-			}
+				// console.log(maxCountsArray);
 
-			console.log(getMaxCountInYear(2012));
-			console.log(getMaxCountInYear(2015));
-			
+				function getMaxCountInYear(year) {
+					return maxCountsArray[+year - years[0]];
+				}
 
-			function colorScale(row) {
-				var year = row.Year;
-				var maxForCurrentYear = getMaxCountInYear(year);
-				return d3.scaleLinear()
-							  	.domain(d3.range(0, maxForCurrentYear, 1))
-							  	.range(colors);
-			}
-			// linear color scale
-			var colorScale = 
+				function colorScale(row) {
+					var year = row.Year;
+					var maxForCurrentYear = getMaxCountInYear(year);
+					var scaled =  d3.scaleLinear()
+								  	.domain(d3.range(0, maxForCurrentYear, 9))
+								  	.range(colors);
+				  	// console.log(scaled(row.Count));
+				  	return scaled(row.Count);
+				}
 
-		  	console.log(colorScale);
-
-			svg.selectAll(".tile")
-			      .data(getDataByYear(0))
-			    	.enter().append("rect")
-			      .attr("class", "tile")
-			      .attr("x", function(d, i) { return i * gridSize; })
-			      .attr("y", function(d, i) { return i * gridSize; })
-			      .attr("class", "hour bordered")
-			      .attr("width", gridSize)
-			      .attr("height",  gridSize)
-			      .style("stroke", "white")
-			      .style("stroke-opacity", 0.6)
-			      .style("fill", function(d) { return colorScale(d); });
-
-			console.log(colorScale(16));
-
-			console.log(colorScale(5));
- 	// var data1 = data.map(function(d) {
- 	// 		return [d.Rating, d.WinsNoms, d.Budget, d.IsGoodRating]
- 	// 	}
- 	// );
-
- 	// console.log(data1);
-
- // 	x.domain(d3.extent(data1, function(d) { return d[0]; })).nice();
-	// y.domain(d3.extent(data1, function(d) { return d[1]; })).nice();
-	// y2.domain(d3.extent(data1, function(d) { return d[2]; })).nice();
-
-	// // Add the x-axes.
- //    svg.append("g")
- //        .attr("class", "x axis")
- //        .attr("transform", "translate(0," + height + ")")
- //        .call(d3.axisBottom(x));
-
- //    svg.append("g")
- //        .attr("class", "x axis")
- //        .attr("transform", "translate(0," + (2*height +margin.bottom) + ")")
- //        .call(d3.axisBottom(x));
- 
- //    // Add the y-axes.
- //    svg.append("g")
- //        .attr("class", "y axis")
- //        .call(d3.axisLeft(y));
-
- //    svg.append("g")
- //        .attr("class", "y axis")
- //        .attr("transform", "translate(0," + 1*height + ")")
- //        .call(d3.axisLeft(y2));
+				svg.selectAll(".tile")
+				      .data(getDataByYear(0))
+				    	.enter().append("rect")
+				      .attr("class", "tile")
+				      .attr("x", function(d, i) { return Math.floor(i/boroughs.length) * gridSize; })
+				      .attr("y", function(d, i) { return (i % boroughs.length) * gridSize; })
+				      .attr("class", "hour bordered")
+				      .attr("width", gridSize)
+				      .attr("height",  gridSize)
+				      .style("stroke", "white")
+				      .style("stroke-opacity", 0.6)
+				      .style("fill", function(d) { return colorScale(d); });
 
 
-	// var symbolGenerator = d3.symbol()
-	//   						.size(15);
+		// var legendData = [["bad rating", "red", "circle"], ["good rating", "blue", "cross"]];
 
-	// function getSymbol(d) {
-	// 	return d[3] ? d3.symbolCross : d3.symbolCircle;
-	// }
+		// svg.selectAll('.symbol')
+	 //     .data(legendData)
+	 //     .enter()
+	 //     .append('path')
+	 //     .attr('transform', function(d, i) {
+	 //       return 'translate(' + (width) + ',' + ((i * 20) + 10) + ')';
+	 //     })
+	 //     .attr('d', d3.symbol().type(function(d, i) {
+	 //         if (d[2] === "circle") {
+	 //           return d3.symbolCircle;
+	 //         } else if (d[2] === "cross") {
+	 //           return d3.symbolCross;
+	 //         } 
+	 //       })
+	 //       .size(25))
+	 //     .style("stroke", function(d) {
+	 //       return d[1];
+	 //     });
 
- //    Add the points!
-	// d3.select('g')
-	// .selectAll('path')
-	// .data(data1)
-	// .enter()
-	// .append('path')
-	// .attr("stroke", function(d){return d[3] ? "blue":"red"})
-	// .attr('transform', function(d) {
-	// 	return "translate(" + x(d[0]) + "," + y(d[1]) + ")"; 
-	// })
-	// .attr('d', function(d) {
-	// 		symbolGenerator.type(getSymbol(d));
-	// 		return symbolGenerator();
-	// });
+	 //   svg.selectAll('.label')
+	 //     .data(legendData)
+	 //     .enter()
+	 //     .append('text')
+	 //     .attr("x", width + 7.5)
+	 //     .attr("y", function(d, i){ return ((i * 20) + 12.5);})
+	 //     .text(function(d) {
+	 //       return d[0];
+	 //     });
 
+	 //    // Add Title 
+		// svg.append("text")
+		// 	.attr("x", (width/2 - margin.right ))
+		// 	.attr("y", 0)
+		// 	// .attr("class", "label")
+		// 	.attr("text-anchor", "middle")
+		// 	.attr("font-family", "sans-serif")
+		// 	.attr("font-size", "12px")
+		// 	.attr("font-weight", "bold")
+		// 	.text("Wins+Nominations vs. Rating");
 
-	// //
-	// d3.select('#area2')
-	// 	.selectAll('path')
-	// 	.data(data1)
-	// 	.enter()
-	// 	.append('path')
-	// 	// .attr("stroke", function(d){return d[3] ? "blue":"red"})
-	// 	.attr("stroke", "green")
-	// 	.attr('transform', function(d) {
-	// 		return "translate(" + x(d[2]) + "," + y2(d[1]) + ")"; 
-	// 	})
-	// 	.attr('d', function(d) {
-	// 			symbolGenerator.type(getSymbol(d));
-	// 			return symbolGenerator();
-	// 	});
-	// //
+		// // Add x-axis label
+		// svg.append("text")
+	 //      // .attr("class", "label")
+	 //      .attr("x", width + margin.left - 5)
+	 //      .attr("y", height )
+	 //      .attr("font-size", "11px")
+	 //      .attr("font-family", "sans-serif")
+	 //      .style("text-anchor", "end")
+	 //      .text("Rating");
 
-	// var legendData = [["bad rating", "red", "circle"], ["good rating", "blue", "cross"]];
-
-	// svg.selectAll('.symbol')
- //     .data(legendData)
- //     .enter()
- //     .append('path')
- //     .attr('transform', function(d, i) {
- //       return 'translate(' + (width) + ',' + ((i * 20) + 10) + ')';
- //     })
- //     .attr('d', d3.symbol().type(function(d, i) {
- //         if (d[2] === "circle") {
- //           return d3.symbolCircle;
- //         } else if (d[2] === "cross") {
- //           return d3.symbolCross;
- //         } 
- //       })
- //       .size(25))
- //     .style("stroke", function(d) {
- //       return d[1];
- //     });
-
- //   svg.selectAll('.label')
- //     .data(legendData)
- //     .enter()
- //     .append('text')
- //     .attr("x", width + 7.5)
- //     .attr("y", function(d, i){ return ((i * 20) + 12.5);})
- //     .text(function(d) {
- //       return d[0];
- //     });
-
- //    // Add Title 
-	// svg.append("text")
-	// 	.attr("x", (width/2 - margin.right ))
-	// 	.attr("y", 0)
-	// 	// .attr("class", "label")
-	// 	.attr("text-anchor", "middle")
-	// 	.attr("font-family", "sans-serif")
-	// 	.attr("font-size", "12px")
-	// 	.attr("font-weight", "bold")
-	// 	.text("Wins+Nominations vs. Rating");
-
-	// // Add x-axis label
-	// svg.append("text")
- //      // .attr("class", "label")
- //      .attr("x", width + margin.left - 5)
- //      .attr("y", height )
- //      .attr("font-size", "11px")
- //      .attr("font-family", "sans-serif")
- //      .style("text-anchor", "end")
- //      .text("Rating");
-
- //     // Add y-axis label
-	// svg.append("text")
- //      // .attr("class", "label")
- //      .attr("x",  margin.left - 30)
- //      .attr("y", margin.top - 12)
- //      .attr("font-size", "11px")
- //      .attr("font-family", "sans-serif")
- //      .attr("transform", "rotate(-90)")
- //      .style("text-anchor", "end")
- //      .text("Wins+Noms");
-});
+	 //     // Add y-axis label
+		// svg.append("text")
+	 //      // .attr("class", "label")
+	 //      .attr("x",  margin.left - 30)
+	 //      .attr("y", margin.top - 12)
+	 //      .attr("font-size", "11px")
+	 //      .attr("font-family", "sans-serif")
+	 //      .attr("transform", "rotate(-90)")
+	 //      .style("text-anchor", "end")
+	 //      .text("Wins+Noms");
+	});
 
 
-        </script>
-    </body>
-	
-</html>     
+	        </script>
+	    </body>
+		
+	</html>     
