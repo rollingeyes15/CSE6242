@@ -53,26 +53,6 @@
 	        <script type="text/javascript">
 	            // Your beautiful D3 code will go here
 
-	//             var data = ["Option 1", "Option 2", "Option 3"];
-
-	// var select = d3.select('body')
-	//   .append('select')
-	//   	.attr('class','select')
-	//     .on('change',onchange)
-
-	// var options = select
-	//   .selectAll('option')
-	// 	.data(data).enter()
-	// 	.append('option')
-	// 		.text(function (d) { return d; });
-
-	// function onchange() {
-	// 	selectValue = d3.select('select').property('value')
-	// 	d3.select('body')
-	// 		.append('p')
-	// 		.text(selectValue + ' is the last selected option.')
-	// };
-
 				var long_data = [];
 	            var dataset = d3.csv("heatmap.csv")
 	            	.then(function(row1) {
@@ -101,10 +81,11 @@
 	   			width = 400 - margin.left - margin.right,
 	    		height = 400 - margin.top - margin.bottom;
 	    		
-	    		// var colors = ["#ffffcc", "#ffeda0", "#fed976", "#feb24c", "#fd8d3c", "#fc4e2a", "#e31a1c", "#bd0026", "#800026"]; // colorbrewer.YlOrRd[9]
-	    		// var colors = colorbrewer.YlOrRd[9];
-	    		// var colors = colorbrewer.RdPu[9];
-	    		var colors = d3.schemeRdPu[9];
+	    		var color_gradations = 9;
+	    		// var colors = ["#ffffcc", "#ffeda0", "#fed976", "#feb24c", "#fd8d3c", "#fc4e2a", "#e31a1c", "#bd0026", "#800026"]; // colorbrewer.YlOrRd[color_gradations]
+	    		// var colors = colorbrewer.YlOrRd[color_gradations];
+	    		// var colors = colorbrewer.RdPu[color_gradations];
+	    		var colors = d3.schemeRdPu[color_gradations];
 
 	    		var x = d3.scaleLinear().range([0, width]);
 				var y = d3.scaleLinear().range([height, 0]);
@@ -122,8 +103,6 @@
 				var types = long_data.map(function(d) {return d.Type;}).sort().filter(function(item, pos, ary) {
 											        return !pos || item != ary[pos - 1];
 											    });
-				// console.log(types);
-				// console.log(types.length);
 
 				var boroughs = long_data.map(function(d) {return d.Borough;}).sort().filter(function(item, pos, ary) {
 											        return !pos || item != ary[pos - 1];
@@ -133,10 +112,7 @@
 								        return !pos || item != ary[pos - 1];
 								    });
 
-				// console.log(years);
-				// console.log(boroughs);
 				var gridSize = Math.floor(width / types.length);
-				// console.log("gridSize = " + gridSize);
 
 				var yLabels = svg.selectAll(".yLabel")
 						          	.data(boroughs)
@@ -154,7 +130,6 @@
 						            .attr("y", function(d, i) { return i * gridSize + gridSize/2; })
 						            .attr("x", -(height + 6))
 						            .style("text-anchor", "end")
-						            // .attr("transform", "translate(" + gridSize / 2 + ", -6)")
 						            .attr("transform", "rotate(-90)")
 						            ;
 
@@ -168,17 +143,6 @@
 					        .append("option")
 					        .attr("value", function(d, i) { return i; })
 					        .text(function(d) { return d; });
-
-			    locationMenu.on("change", function() {
-			      		// find which year was selected from the dropdown
-				      var selectedYearIndex = d3.select(this)
-				        .select("select")
-				        .property("value");
-				        // console.log(selectedYearIndex);
-
-				      var dataByYear = getDataByYear(selectedYearIndex);
-				      // console.log(dataByYear);
-			    }); 
 
 			    function getDataByYear(idx = 0) {
 			    	var temp =  long_data
@@ -200,8 +164,6 @@
 					return getMaxCount(years[i]);
 				});
 
-				// console.log(maxCountsArray);
-
 				function getMaxCountInYear(year) {
 					return maxCountsArray[+year - years[0]];
 				}
@@ -212,12 +174,12 @@
 					var scaled =  d3.scaleLinear()
 								  	.domain(d3.range(0, maxForCurrentYear, 9))
 								  	.range(colors);
-				  	// console.log(scaled(row.Count));
 				  	return scaled(row.Count);
 				}
 
-				svg.selectAll(".tile")
-				      .data(getDataByYear(0))
+		      	function updateHeatMap(dataOfSelectedYear) {
+		      		svg.selectAll(".tile")
+				      .data(dataOfSelectedYear)
 				    	.enter().append("rect")
 				      .attr("class", "tile")
 				      .attr("x", function(d, i) { return Math.floor(i/boroughs.length) * gridSize; })
@@ -228,8 +190,23 @@
 				      .style("stroke", "white")
 				      .style("stroke-opacity", 0.6)
 				      .style("fill", function(d) { return colorScale(d); });
+		      	} 
 
+		      	var defaultYearIndex = 0;
+		      	var dataOfDefaultYear = getDataByYear(defaultYearIndex);
+		      	updateHeatMap(dataOfDefaultYear);
 
+			    locationMenu.on("change", function() {
+			      		// find which year was selected from the dropdown
+				      var selectedYearIndex = d3.select(this)
+				        .select("select")
+				        .property("value");
+
+				      var dataByYear = getDataByYear(selectedYearIndex);
+
+				      updateHeatMap(dataByYear);
+				      
+			    }); 
 		// var legendData = [["bad rating", "red", "circle"], ["good rating", "blue", "cross"]];
 
 		// svg.selectAll('.symbol')
@@ -293,8 +270,6 @@
 	 //      .style("text-anchor", "end")
 	 //      .text("Wins+Noms");
 	});
-
-
 	        </script>
 	    </body>
 		
