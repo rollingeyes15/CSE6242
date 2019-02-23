@@ -1,0 +1,29 @@
+html { 
+      font-size: 62.5%; 
+    } 
+
+body {
+  margin-top: 30px;
+  font-size: 1.4rem;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 400;
+  fill: #696969;
+  text-align: center;
+}
+
+.xLabel, .yLabel {
+	    font-size: 1.2rem;
+	    fill: #AAAAAA;
+	    font-weight: 300;
+	    text-anchor: end;
+	}
+
+#nav-container {
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+}
+
+#nav-container .left {
+  margin-right: 10px;
+}
