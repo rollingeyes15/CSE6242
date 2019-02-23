@@ -1,0 +1,68 @@
+html { 
+      font-size: 62.5%; 
+    } 
+
+/*  body {
+  margin-top: 30px;
+  font-size: 1.4rem;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 400;
+  fill: #696969;
+  text-align: center;
+}*/
+
+.bar {
+	font-size: 1.2rem;
+    /*fill: #AAAAAA;*/
+    /*fill: blue;*/
+    font-weight: 300;
+    text-anchor: end;
+    color: white;
+    fill: #6F257F
+}
+
+/*  .toolTip {
+	position: absolute;
+	display: none;
+	min-width: 80px;
+	height: auto;
+	background: none repeat scroll 0 0 #ffffff;
+	border: 1px solid #6F257F;
+	padding: 14px;
+	text-align: center;
+}*/
+
+.labeltext {
+	font-size: 1.2rem;
+	pointer-events: none;
+    /*fill: #AAAAAA;*/
+    fill: white;
+    font-weight: 700;
+    /*.attr("font-weight", "bold")*/
+    /*text-anchor: end;*/
+    color: blue;
+
+    /*fill: #6F257F*/
+}
+/*
+.x_axis_local, .y_axis_local {
+	fill: none;
+	stroke-width: 1.2px
+}*/
+
+.xLabel, .yLabel {
+	    font-size: 1.2rem;
+	    fill: #AAAAAA;
+	    font-weight: 300;
+	    text-anchor: end;
+	}
+
+.yAxis{
+	stroke: none;
+	fill: none;
+}
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
