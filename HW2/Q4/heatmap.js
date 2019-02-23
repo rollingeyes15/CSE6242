@@ -22,7 +22,7 @@ var dataset = d3.csv("heatmap.csv")
 		;
 
 var l = long_data.length;
-var margin = {top: 50, right: 0, bottom: 100, left: 100},
+var margin = {top: 30, right: 0, bottom: 100, left: 100},
 	width = 400 - margin.left - margin.right,
 	height = 400 - margin.top - margin.bottom;
 
@@ -70,7 +70,7 @@ var xLabels = svg.selectAll(".xLabel")
 			        .enter().append("text")
 				    .text(function(d) { return d; })
 		            .attr("y", function(d, i) { return i * gridSize + gridSize/2; })
-		            .attr("x", -(height + 6))
+		            .attr("x", -(height + margin.top - 35))
 		            .attr("class", "xLabel")
 		            .attr("transform", "rotate(-90)")
 		            ;
@@ -195,18 +195,9 @@ svg.append("text")
 
 svg.append("text")
 	.attr("x", width )
-	.attr("y", height + 15)
+	.attr("y", (height + margin.top - 35))
 	.style("font-weight", "bold")
 	.style("text-anchor", "left")
 	.style("font-size", "12px")
 	.text("Crime Type");
-
-svg.append("text")
-	.attr("x", 0 )
-	.attr("y", -30)
-	.style("font-weight", "bold")
-	.style("text-anchor", "center")
-	.style("font-size", "16px")
-	.text("Visualizing Crimes in New York City");
-
 });
