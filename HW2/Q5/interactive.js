@@ -83,14 +83,14 @@ function mouseoverFunction(d, i) {
 	        .call(d3.axisBottom(xLocal).ticks(years.length).tickFormat(d3.format("d")))
 	        .attr("class", "yLocal");
 
-		    var line = d3.line()
-			      .x(function(d, i) { return (xLocal(d.year) + width + 25);})
-			      .y(function(d, i) { return yLocal(d.growth);});
+	    var line = d3.line()
+		      .x(function(d, i) { return (xLocal(d.year) + width + 25);})
+		      .y(function(d, i) { return yLocal(d.growth);});
 
-			svg.append("path")
-			    .datum(dataset) 
-			    .attr("class", "line") 
-			    .attr("d", line);
+		svg.append("path")
+		    .datum(dataset) 
+		    .attr("class", "line") 
+		    .attr("d", line);
     }
 
 function mouseoutFunction(d, i) {
@@ -104,11 +104,11 @@ function mouseoutFunction(d, i) {
 
 
 var bars = svg.selectAll(".bar");
+
 bars
 	.data(data)
 	.enter()
 	.append("rect")
-	// .attr("class", "bar")
 	.attr("y", function (d) {
 	    return y(d.country);
 	})
@@ -125,17 +125,18 @@ bars
 	.on('mouseout', mouseoutFunction );
 	;
 
-bars.append("text")
-	.attr("y", function (d) {
+svg.append("g") 
+    .selectAll("text")
+    .data(data)
+    .enter()
+    .append("text")
+    .text(function(d){
+			var growth_cum = Object.values(d.growth).reduce((a, b) => a + b);
+    		var total_pop = growth_cum + d.population_2012;
+    		return total_pop.toLocaleString();
+	})
+    .attr("x", 12)
+    .attr("y", function (d) {
                 return y(d.country) + y.bandwidth()/2 + 4;
             })
-	.attr("x", 20)
-	// .style("color", "red")
-	.attr("class", "labeltext")
-
-	.text(function(d){
-		var growth_cum = Object.values(d.growth).reduce((a, b) => a + b);
-    var total_pop = growth_cum + d.population_2012;
-    return total_pop.toLocaleString();
-});
-       
+    .attr("class", "labeltext");    

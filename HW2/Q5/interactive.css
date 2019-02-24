@@ -5,40 +5,27 @@ html {
 .bar {
 	font-size: 1.2rem;
     fill: #AAAAAA;
-    /*fill: blue;*/
     font-weight: 300;
     text-anchor: end;
     color: white;
-    /*fill: #6F257F*/
 }
 
 .bar:hover {
 	font-size: 1.2rem;
-    /*fill: #AAAAAA;*/
     fill: blue;
     font-weight: 300;
     text-anchor: end;
     color: white;
-    /*fill: #6F257F*/
 }
 
 .labeltext {
+	font-family: sans-serif;
 	font-size: 1.2rem;
 	pointer-events: none;
-    /*fill: #AAAAAA;*/
     fill: white;
     font-weight: 700;
-    /*.attr("font-weight", "bold")*/
-    /*text-anchor: end;*/
     color: blue;
-
-    /*fill: #6F257F*/
 }
-/*
-.x_axis_local, .y_axis_local {
-	fill: none;
-	stroke-width: 1.2px
-}*/
 
 .xLabel, .yLabel {
 	    font-size: 1.2rem;
