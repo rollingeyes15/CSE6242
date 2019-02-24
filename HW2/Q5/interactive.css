@@ -2,35 +2,25 @@ html {
       font-size: 62.5%; 
     } 
 
-/*  body {
-  margin-top: 30px;
-  font-size: 1.4rem;
-  font-family: 'Source Sans Pro', sans-serif;
-  font-weight: 400;
-  fill: #696969;
-  text-align: center;
-}*/
-
 .bar {
 	font-size: 1.2rem;
-    /*fill: #AAAAAA;*/
+    fill: #AAAAAA;
     /*fill: blue;*/
     font-weight: 300;
     text-anchor: end;
     color: white;
-    fill: #6F257F
+    /*fill: #6F257F*/
 }
 
-/*  .toolTip {
-	position: absolute;
-	display: none;
-	min-width: 80px;
-	height: auto;
-	background: none repeat scroll 0 0 #ffffff;
-	border: 1px solid #6F257F;
-	padding: 14px;
-	text-align: center;
-}*/
+.bar:hover {
+	font-size: 1.2rem;
+    /*fill: #AAAAAA;*/
+    fill: blue;
+    font-weight: 300;
+    text-anchor: end;
+    color: white;
+    /*fill: #6F257F*/
+}
 
 .labeltext {
 	font-size: 1.2rem;
