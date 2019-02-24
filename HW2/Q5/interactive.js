@@ -47,17 +47,10 @@ function mouseoverFunction(d, i) {
 
         var growth_rates = [];
         for(var i = 1; i <= growth.length; i++){
-        	growth_rates.push((growth[i-1]*100/cum_population[i]).toFixed(2));
+        	growth_rates.push(+(growth[i-1]*100/cum_population[i]).toFixed(2));
         }
 
-        var parseDate = d3.timeFormat("%Y");
         var years = [2013, 2014, 2015, 2016, 2017];
-        years.map(year => parseDate(year));
-
-        console.log(years);
-
-        console.log(growth_rates);
-        console.log(d3.extent(growth_rates));
 
         var dataset = growth_rates.map(function(d, i) {
         	console.log(years[i]);
@@ -101,7 +94,6 @@ function mouseoutFunction(d, i) {
 	d3.select("svg").selectAll(".xLocal").remove();
 
 }
-
 
 var bars = svg.selectAll(".bar");
 
