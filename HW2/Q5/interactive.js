@@ -5,7 +5,7 @@ var data = [{country: 'Bangladesh', population_2012: 105905297, growth: {year_20
 			        {country: 'Morocco', population_2012: 13619520, growth: {year_2013:11862 , year_2014:7997 , year_2015:391 , year_2016:-8820 , year_2017:-17029}}];
 
 
-var margin = {top: 50, right: 200, bottom: 10, left: 100},
+var margin = {top: 50, right: 130, bottom: 10, left: 100},
 	width = 900 - margin.left - margin.right,
 	height = 400 - margin.top - margin.bottom;
 
@@ -53,7 +53,6 @@ function mouseoverFunction(d, i) {
         var years = [2013, 2014, 2015, 2016, 2017];
 
         var dataset = growth_rates.map(function(d, i) {
-        	console.log(years[i]);
         	return {'year': years[i], 'growth': Number(growth_rates[i])};
         });
 
@@ -64,30 +63,48 @@ function mouseoverFunction(d, i) {
         var xLocal = d3.scaleLinear()
             .range([0, width/2])
             .domain(d3.extent(years));
+       
+        var lineChart_x = width - 150;
 
         var y_axis_local = svg
         	.append("g")
 	        .attr("class", "yLocal")
-	        .attr("transform", "translate(" + (width + 25) + "," + (0)+")")
+	        .attr("transform", "translate(" + lineChart_x + "," + (0)+")")
 	        .call(d3.axisLeft(yLocal));
   
 	     var x_axis_local = svg.append("g")
-	        .attr("transform", "translate(" + (width + 25 )+ "," + (height/2) + " )")
+	        .attr("transform", "translate(" + lineChart_x + "," + (height/2) + " )")
 	        .call(d3.axisBottom(xLocal).ticks(years.length).tickFormat(d3.format("d")))
 	        .attr("class", "yLocal");
 
 	    var line = d3.line()
-		      .x(function(d, i) { return (xLocal(d.year) + width + 25);})
+		      .x(function(d, i) { return (xLocal(d.year) + lineChart_x);})
 		      .y(function(d, i) { return yLocal(d.growth);});
 
 		svg.append("path")
 		    .datum(dataset) 
 		    .attr("class", "line") 
 		    .attr("d", line);
+
+		svg.append("text")
+			.text("Pct %")
+			.attr("x", lineChart_x - 30)
+			.attr("y", -15)
+			.attr("class", "yLocal")
+			.attr("text-anchor", "left")
+			.attr("font-size", "11px");			
+
+		svg.append("text")
+			.text("Year")
+	        .attr("transform", "translate(" + lineChart_x + "," + (height/2) + " )")
+			.attr("x", xLocal(years[years.length -1]) - 15)
+			.attr("y", 35)
+			.attr("class", "xLocal")
+			.attr("font-size", "11px");			
     }
 
 function mouseoutFunction(d, i) {
-	d3.select(this).style("fill", "grey");
+	d3.select(this).attr("fill", "grey");
 
 	d3.select("svg").selectAll("path").remove();
 	d3.select("svg").selectAll(".yLocal").remove();
@@ -95,7 +112,7 @@ function mouseoutFunction(d, i) {
 
 }
 
-var bars = svg.selectAll(".bar");
+var bars = svg.selectAll("rectangle");
 
 bars
 	.data(data)
@@ -110,7 +127,6 @@ bars
 	.attr("width", function (d) {
 		var growth_cum = Object.values(d.growth).reduce((a, b) => a + b);
 	    var total_pop = growth_cum + d.population_2012;
-	    // console.log("total_pop = " + total_pop);
 	    return x(total_pop);
 	})
 	.on('mouseover', mouseoverFunction)
@@ -131,4 +147,10 @@ svg.append("g")
     .attr("y", function (d) {
                 return y(d.country) + y.bandwidth()/2 + 4;
             })
-    .attr("class", "labeltext");    
+    .attr("class", "labeltext");
+
+svg.append("text")
+	.text("Figure 5a. Bars representing total rural population of each country")
+	.attr("x", 35)
+	.attr("y", height + 25)
+	.attr("font-size", "16px");

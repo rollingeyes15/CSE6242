@@ -2,22 +2,11 @@ html {
       font-size: 62.5%; 
     } 
 
-.bar {
+.rectangle {
 	font-size: 1.2rem;
-    fill: #AAAAAA;
     font-weight: 300;
-    text-anchor: end;
     color: white;
 }
-
-.bar:hover {
-	font-size: 1.2rem;
-    fill: blue;
-    font-weight: 300;
-    text-anchor: end;
-    color: white;
-}
-
 .labeltext {
 	font-family: sans-serif;
 	font-size: 1.2rem;
@@ -37,6 +26,9 @@ html {
 .yAxis{
 	stroke: none;
 	fill: none;
+	color: grey;
+	font-size: 1.2rem;
+	font-weight: 600;
 }
 .line {
   fill: none;
