@@ -13,10 +13,10 @@
 var svg = d3.select("svg");
 // ;
 var width = +svg.attr("width");
-
+console.log("width:" + width);
    // var width = +svg.attr("width") - margin.left;
    var height = +svg.attr("height");
-
+console.log("height:" + height  );
 var unemployment = d3.map();
 
 var path = d3.geoPath();
@@ -36,7 +36,7 @@ var g = svg.append("g")
     .attr("class", "key")
     .attr("transform", "translate(0,40)");
 
-g.selectAll("rect")
+g.selectAll("rect").append("g")
   .data(color.range().map(function(d) {
       d = color.invertExtent(d);
       console.log(d);
@@ -45,9 +45,10 @@ g.selectAll("rect")
       return d;
     }))
   .enter().append("rect")
+  .attr("class", "legend")
     .attr("height", 15)
-    .attr("transform", "translate(" + width + "," + (height-300_ + ")")
     // .attr("x", function(d) { return x(d[0]); })
+    .attr("transform", "translate(" + (width-60) + "," + (height-300) + ")")
     .attr("x", 0)
     .attr("y", function(d, i){return  ((i * 15));})
     // .attr("x", function(d) { return x(width - 20); })
@@ -55,6 +56,27 @@ g.selectAll("rect")
     .attr("width", 15)
     .attr("padding", 0.5)
     .attr("fill", function(d) { return color(d[0]); });
+
+
+// g.selectAll("rect")
+//   .data(color.range().map(function(d) {
+//       d = color.invertExtent(d);
+//       console.log(d);
+//       if (d[0] == null) d[0] = x.domain()[0];
+//       if (d[1] == null) d[1] = x.domain()[1];
+//       return d;
+//     }))
+//   .enter().append("rect")
+//     .attr("height", 15)
+//     .attr("transform", "translate(" + width + "," + (height-300) + ")")
+//     // .attr("x", function(d) { return x(d[0]); })
+//     .attr("x", 0)
+//     .attr("y", function(d, i){return  ((i * 15));})
+//     // .attr("x", function(d) { return x(width - 20); })
+//     // .attr("width", function(d) { return x(d[1]) - x(d[0]); })
+//     .attr("width", 15)
+//     .attr("padding", 0.5)
+//     .attr("fill", function(d) { return color(d[0]); });
 
 g.append("text")
     .attr("class", "caption")
