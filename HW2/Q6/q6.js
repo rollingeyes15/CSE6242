@@ -21,10 +21,7 @@ var x = d3.scaleLinear()
     .rangeRound([600, 860]);
 
 min_poverty_rate = Math.floor(ranges[0]);
-console.log(min_poverty_rate);
-
 max_poverty_rate = Math.ceil(ranges[1]);
-console.log(max_poverty_rate);
 
 // Since we have very few counties with very high poverty rate, 
 // I decided to scale the color map linearly and put the wide range of
@@ -72,10 +69,8 @@ g.selectAll("text").append("g")
     .attr("font-size", "9px")
     .text(function(d, i){
           if(i < 8){
-            console.log(i);
             return "\u2264" + domainOfColorScale[i+1] + "%";
           } else {
-            console.log(i);
             return "\u2265"  + "18%";
       }});
 
@@ -98,10 +93,20 @@ var promises = [
 ]
 
 Promise.all(promises).then(ready);
-console.log(unemployment);
-console.log(d3.extent(Object.values(unemployment)));
 
 function ready([us]) {
+  var tip = d3.tip()
+              .attr('class', 'd3-tip')
+              .offset(function() {
+                  return [-10,0];
+            })
+              .html(function(d) {
+                console.log(d);
+                  return d;
+            });
+
+  svg.call(tip);
+
   svg.append("g")
       .attr("class", "counties")
     .selectAll("path")
@@ -109,8 +114,12 @@ function ready([us]) {
     .enter().append("path")
       .attr("fill", function(d) { return color(d.rate = unemployment.get(d.id)); })
       .attr("d", path)
-    .append("title")
-      .text(function(d) { return d.rate + "%"; });
+      .on('mousemove', function(d){
+        tip.show(d)
+      })
+       .on('mouseout', tip.hide);
+    // .append("title")
+    //   .text(function(d) { return d.rate + "%"; });
 
   svg.append("path")
       .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
