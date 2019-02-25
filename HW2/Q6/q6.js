@@ -10,23 +10,86 @@
 //             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 //             ;
 
-var svg = d3.select("svg");
-// ;
-var width = +svg.attr("width");
-console.log("width:" + width);
+// var svg = d3.select("svg");
+// // ;
+// var width = +svg.attr("width");
+// console.log("width:" + width);
+//    // var width = +svg.attr("width") - margin.left;
+//    var height = +svg.attr("height");
+// console.log("height:" + height  );
+// var unemployment = d3.map();
+
+// var path = d3.geoPath();
+
+// var x = d3.scaleLinear()
+//     .domain([1, 10])
+//     .rangeRound([600, 860]);
+// console.log(x.domain())
+
+var promiseMax = d3.csv('county_poverty.csv');
+var ranges;
+var allrows = [];
+// Promise.all(promiseMax).then(function(data){
+//   data.map(function(row){
+//     console.log(row);
+//     allrows.push(row);
+//   })
+// });
+
+// var width = +svg.attr("width");
+var width;
+// console.log("width:" + width);
    // var width = +svg.attr("width") - margin.left;
-   var height = +svg.attr("height");
+   var height;
+   // var height = +svg.attr("height");
+   var svg = d3.select("svg");
+   var color;
 console.log("height:" + height  );
 var unemployment = d3.map();
 
 var path = d3.geoPath();
 
+
+d3.csv("county_poverty.csv")
+      .then(function(data) {
+        ranges = d3.extent(data, function(row){
+          // console.log(row);
+          return +row.Poverty;
+        });
+
+        // var svg = d3.select("svg");
+// ;
+width = +svg.attr("width")
+height = +svg.attr("height");
+
 var x = d3.scaleLinear()
     .domain([1, 10])
     .rangeRound([600, 860]);
-// console.log(x.domain())
-var color = d3.scaleThreshold()
-    .domain(d3.range(2, 10))
+
+min_poverty_rate = Math.floor(ranges[0]);
+console.log(min_poverty_rate);
+
+max_poverty_rate = Math.ceil(ranges[1]);
+console.log(max_poverty_rate);
+
+// Since we have very few counties with very high poverty rate, 
+// I decided to scale the color map linearly and put the wide range of
+// extreme poverties into one color bucket. Therefore, above 18% to ~30%
+// will all be in one color bucket.
+var domainOfColorScale = d3.range(min_poverty_rate, 18, (18-min_poverty_rate)/9);
+// domainOfColorScale.push(max_poverty_rate);
+// domainOfColorScale = [2, 4, 6, 8, 10, 12, 14, 16, 18 ];
+console.log(domainOfColorScale);
+
+    // console.log("ranges:" + ranges.map(Math.ceil));
+// var domainOfColorScale = d3.range(Math.floor(ranges[0]), Math.floor(ranges[1]),
+//              (Math.floor(ranges[1]) - Math.floor(ranges[0])) /9);
+// console.log(domainOfColorScale);
+// domainOfColorScale.map(Math.ceil);
+console.log(domainOfColorScale);
+
+ color = d3.scaleThreshold()
+    .domain(domainOfColorScale)
     .range(d3.schemeGreens[9]);
 
 console.log(color.range());
@@ -39,7 +102,7 @@ var g = svg.append("g")
 g.selectAll("rect").append("g")
   .data(color.range().map(function(d) {
       d = color.invertExtent(d);
-      console.log(d);
+      // console.log(d);
       if (d[0] == null) d[0] = x.domain()[0];
       if (d[1] == null) d[1] = x.domain()[1];
       return d;
@@ -50,11 +113,11 @@ g.selectAll("rect").append("g")
     // .attr("x", function(d) { return x(d[0]); })
     .attr("transform", "translate(" + (width-60) + "," + (height-300) + ")")
     .attr("x", 0)
-    .attr("y", function(d, i){return  ((i * 15));})
+    .attr("y", function(d, i){return  ((i * 16) );})
     // .attr("x", function(d) { return x(width - 20); })
     // .attr("width", function(d) { return x(d[1]) - x(d[0]); })
-    .attr("width", 15)
-    .attr("padding", 0.5)
+    .attr("width", 18)
+    // .attr("padding", 15)
     .attr("fill", function(d) { return color(d[0]); });
 
 
@@ -79,20 +142,100 @@ g.selectAll("rect").append("g")
 //     .attr("fill", function(d) { return color(d[0]); });
 
 g.append("text")
-    .attr("class", "caption")
+    // .attr("class", "caption")
     .attr("x", x.range()[0])
     .attr("y", -6)
     .attr("fill", "#000")
     .attr("text-anchor", "start")
-    .attr("font-weight", "bold")
-    .text("Unemployment rate");
+    // .attr("font-weight", "bold")
+    .text("Poverty rate");
 
-g.call(d3.axisBottom(x)
-    .tickSize(13)
-    .tickFormat(function(x, i) { return i ? x : x + "%"; })
-    .tickValues(color.domain()))
-    .select(".domain")
-    .remove();
+// g.call(d3.axisBottom(x)
+//     .tickSize(13)
+//     .tickFormat(function(x, i) { return i ? x : x + "%"; })
+//     .tickValues(color.domain()))
+//     .select(".domain")
+//     .remove();
+
+
+      });
+        // data.forEach(function(d) {
+
+        //   // d.WinsNoms = +d.WinsNoms,
+        //   // d.Rating = +d.Rating,
+        //   // d.Budget = +d.Budget,
+        //   // d.IsGoodRating = +d.IsGoodRating
+        // });
+// console.log("ranges:" + ranges);
+
+// var color = d3.scaleThreshold()
+//     .domain(d3.range(2, 10))
+//     .range(d3.schemeGreens[9]);
+
+// // console.log(color.range());
+// // console.log(color.domain())
+
+// var g = svg.append("g")
+//     .attr("class", "key")
+//     .attr("transform", "translate(0,40)");
+
+// g.selectAll("rect").append("g")
+//   .data(color.range().map(function(d) {
+//       d = color.invertExtent(d);
+//       // console.log(d);
+//       if (d[0] == null) d[0] = x.domain()[0];
+//       if (d[1] == null) d[1] = x.domain()[1];
+//       return d;
+//     }))
+//   .enter().append("rect")
+//   .attr("class", "legend")
+//     .attr("height", 15)
+//     // .attr("x", function(d) { return x(d[0]); })
+//     .attr("transform", "translate(" + (width-60) + "," + (height-300) + ")")
+//     .attr("x", 0)
+//     .attr("y", function(d, i){return  ((i * 15));})
+//     // .attr("x", function(d) { return x(width - 20); })
+//     // .attr("width", function(d) { return x(d[1]) - x(d[0]); })
+//     .attr("width", 15)
+//     .attr("padding", 0.5)
+//     .attr("fill", function(d) { return color(d[0]); });
+
+
+// // g.selectAll("rect")
+// //   .data(color.range().map(function(d) {
+// //       d = color.invertExtent(d);
+// //       console.log(d);
+// //       if (d[0] == null) d[0] = x.domain()[0];
+// //       if (d[1] == null) d[1] = x.domain()[1];
+// //       return d;
+// //     }))
+// //   .enter().append("rect")
+// //     .attr("height", 15)
+// //     .attr("transform", "translate(" + width + "," + (height-300) + ")")
+// //     // .attr("x", function(d) { return x(d[0]); })
+// //     .attr("x", 0)
+// //     .attr("y", function(d, i){return  ((i * 15));})
+// //     // .attr("x", function(d) { return x(width - 20); })
+// //     // .attr("width", function(d) { return x(d[1]) - x(d[0]); })
+// //     .attr("width", 15)
+// //     .attr("padding", 0.5)
+// //     .attr("fill", function(d) { return color(d[0]); });
+
+// g.append("text")
+//     .attr("class", "caption")
+//     .attr("x", x.range()[0])
+//     .attr("y", -6)
+//     .attr("fill", "#000")
+//     .attr("text-anchor", "start")
+//     .attr("font-weight", "bold")
+//     .text("Unemployment rate");
+
+// g.call(d3.axisBottom(x)
+//     .tickSize(13)
+//     .tickFormat(function(x, i) { return i ? x : x + "%"; })
+//     .tickValues(color.domain()))
+//     .select(".domain")
+//     .remove();
 
 var promises = [
   d3.json("us.json"),
@@ -100,7 +243,7 @@ var promises = [
 ]
 
 
-Promise.all(promises).then(ready)
+Promise.all(promises).then(ready);
 console.log(unemployment);
 console.log(d3.extent(Object.values(unemployment)));
 
