@@ -1,24 +1,3 @@
-<!DOCTYPE html>
-<meta charset="utf-8">
-<style>
-
-.counties {
-  fill: none;
-}
-
-.states {
-  fill: none;
-  stroke: #fff;
-  stroke-linejoin: round;
-}
-
-</style>
-<svg width="960" height="600"></svg>
-
-<script src="../lib/d3.v5.min.js"></script>
-<script src="../lib/d3-scale-chromatic.v1.min.js"></script>
-<script src="../lib/topojson.v2.min.js"></script>
-<script>
 
 // var margin = {top: 50, right: 200, bottom: 10, left: 100},
 //             width = 960 - margin.left - margin.right,
@@ -67,9 +46,10 @@ g.selectAll("rect")
     }))
   .enter().append("rect")
     .attr("height", 15)
+    .attr("transform", "translate(" + width + "," + (height-300_ + ")")
     // .attr("x", function(d) { return x(d[0]); })
-    .attr("x", 900)
-    .attr("y", function(d, i){return  ((i * 15) + 300);})
+    .attr("x", 0)
+    .attr("y", function(d, i){return  ((i * 15));})
     // .attr("x", function(d) { return x(width - 20); })
     // .attr("width", function(d) { return x(d[1]) - x(d[0]); })
     .attr("width", 15)
@@ -118,5 +98,3 @@ function ready([us]) {
       .attr("class", "states")
       .attr("d", path);
 }
-
-</script>
