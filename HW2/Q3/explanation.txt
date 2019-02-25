@@ -1,0 +1,3 @@
+From the plot, WinsNoms vs Ratings is better at classifying the data since there is a clear distinction between the groups formed by the shapes. This makes it visually appealing and conveys the point that movies with higher rating are the ones receiving more nominations for awards.
+
+Log scale, as can be understood from the plot, clustered all the points together whereas square root scale spread them apart. So, if the data points have a large scale of variance, log scale is better, and for data spread around a point, square root scale is better.
