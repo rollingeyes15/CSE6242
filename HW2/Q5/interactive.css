@@ -1,0 +1,37 @@
+html { 
+      font-size: 62.5%; 
+    } 
+
+.rectangle {
+	font-size: 1.2rem;
+    font-weight: 300;
+    color: white;
+}
+.labeltext {
+	font-family: sans-serif;
+	font-size: 1.2rem;
+	pointer-events: none;
+    fill: white;
+    font-weight: 700;
+    color: blue;
+}
+
+.xLabel, .yLabel {
+	    font-size: 1.2rem;
+	    fill: #AAAAAA;
+	    font-weight: 300;
+	    text-anchor: end;
+	}
+
+.yAxis{
+	stroke: none;
+	fill: none;
+	color: grey;
+	font-size: 1.2rem;
+	font-weight: 600;
+}
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
