@@ -27,10 +27,11 @@ max_poverty_rate = Math.ceil(ranges[1]);
 // I decided to scale the color map linearly and put the wide range of
 // extreme poverties into one color bucket. Therefore, above 18% to ~30%
 // will all be in one color bucket.
-var domainOfColorScale = d3.range(min_poverty_rate, 18, (18-min_poverty_rate)/9);
+var domainOfColorScale = d3.range(0, 18, (18-min_poverty_rate)/9);
 
 color = d3.scaleThreshold()
-    .domain(domainOfColorScale)
+    // .domain(domainOfColorScale)
+    .domain(d3.range(2, 10))
     .range(d3.schemeGreens[9]);
 
 var g = svg.append("g")
@@ -89,20 +90,37 @@ g.append("text")
 
 var promises = [
   d3.json("us.json"),
-  d3.csv("county_poverty.csv", function(d) { unemployment.set(d.CensusId, +d.Poverty); })
+  d3.csv("county_poverty.csv", function(d) { 
+    unemployment.set(d.CensusId, 
+                      {"rate": +d.Poverty, "State": d.State, "County": d.County});
+                       }),
+
+  d3.csv("county_detail.csv", function(d) {
+
+    var tempKey = unemployment.get(d.CensusId);
+
+    tempKey["TotalPop"] = +d.TotalPop;
+    tempKey["IncomePerCap"]= +d.IncomePerCap;
+    unemployment.set(d.CensusId, tempKey);
+                       })
 ]
 
 Promise.all(promises).then(ready);
 
 function ready([us]) {
+
   var tip = d3.tip()
               .attr('class', 'd3-tip')
               .offset(function() {
                   return [-10,0];
             })
               .html(function(d) {
-                console.log(d);
-                  return d;
+                  return "<p font-size=5px> State: " + unemployment.get(d.id)["State"] + "<br>"
+                          + "County: " + unemployment.get(d.id)["County"] + "<br>"
+                          + "Poverty Rate: " + unemployment.get(d.id)["rate"] + "%" + "<br>"
+                          + "Total Population: " + unemployment.get(d.id)["TotalPop"] + "<br>"
+                          + "Income per capita: " + unemployment.get(d.id)["IncomePerCap"] + "</p>"
+                        ;
             });
 
   svg.call(tip);
@@ -112,14 +130,13 @@ function ready([us]) {
     .selectAll("path")
     .data(topojson.feature(us, us.objects.counties).features)
     .enter().append("path")
-      .attr("fill", function(d) { return color(d.rate = unemployment.get(d.id)); })
+      .attr("fill", function(d) { 
+        return color(unemployment.get(d.id)["rate"]); })
       .attr("d", path)
       .on('mousemove', function(d){
         tip.show(d)
       })
        .on('mouseout', tip.hide);
-    // .append("title")
-    //   .text(function(d) { return d.rate + "%"; });
 
   svg.append("path")
       .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))

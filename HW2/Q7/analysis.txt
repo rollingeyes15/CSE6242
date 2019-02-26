@@ -1,0 +1,35 @@
+1. Ease to develop
+        Tableau: Easy to make complicated charts, could be more intuitive and self-explanatory.
+        D3: Huge learning curve for a beginner - learn everything from CSS, HTML and Javascript. Lack of interoperability between versions a sore point. Tough to catch up. 
+        Matlab: Very easy. Documentation clear. You know what you can do and what you can't.
+        Python: Quite easy as a developer. Quick to write code.
+        Excel: Very easy to develop charts. For advanced level: Visual Basic, not easy 
+        R: Very similar to python and not especially difficult.
+
+2. Ease to maintain the visualization
+        Tableau: Visualization works if columns referred are valid.
+        D3: Possible to write the code so the visualization does not break. Big advantage
+        Matlab: Fairly easy to maintain code base
+        Python: Easy to maintain. Versioning a problem
+        Excel: Could break if new data is inconsistent
+        R: Same as what holds for Matlab and Python.
+
+3. Usability of visualization developed for end users
+		Tableau: Exports to several formats. So, good. Not for web-based visualization. Lacks plug and play
+		D3: Excellent for web-based end users. For PDFs, this is alright too
+		Matlab, R, Python: Visualizations exportable to SVG. So, good.
+		Excel: The visualizations from here can get pixalated too, but can be exported to almost anywhere
+
+4. Scalability of visualization to “large” datasets
+		Tableau: Not confident for large datasets. 
+		Python: Best of the pack here for large data sets. Very useful to process and transform data with Spark etc.
+		Matlab: Unable to run on distributed systems, a dealbreaker.
+		R: Similar to Python, scales well
+		Excel: Very bad after a point to deal with large datasets.
+
+5. System requirements to run the visualization (e.g., browsers, OS, software licensing) for end users
+		Tableau: Need software licenses, can be expensive. For enterprise solutions, a dedicated server. Works on all OS
+		Python: Open source, almost free. Runs on every OS and no licensing needed. For web-based applications, not sure if it is the best though.
+		Matlab: Need expensive licensing, and is quite resource-hungry. Computational resources are not cheap
+		R: Same as what we have for Matlab, but open source. Packages in R make it more modular - so resources scaled accordingly.
+		Excel: Need licensing. Works best with Windows, not so with Linux based OS.
