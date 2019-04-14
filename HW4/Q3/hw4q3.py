@@ -76,7 +76,7 @@ rf.fit(x_train, y_train)
 y_test_pred_rf = rf.predict(x_test)
 y_train_pred_rf = rf.predict(x_train)
 test_accuracy_rf = round(accuracy_score(y_test, y_test_pred_rf.round()), 2)
-train_accurac_rf = round(accuracy_score(y_train, y_train_pred_rf.round()), 2)
+train_accurac_rf = round(accuracy_score(y_train, y_train_pred_rf.round()), 2)s
 
 # XXX
 # TODO: Determine the feature importance as evaluated by the Random Forest Classifier.
@@ -90,6 +90,44 @@ train_accurac_rf = round(accuracy_score(y_train, y_train_pred_rf.round()), 2)
 # TODO: Tune the hyper-parameters 'n_estimators' and 'max_depth'.
 #       Print the best params, using .best_params_, and print the best score, using .best_score_.
 # XXX
+scaler = StandardScaler()
+
+scaler_train = scaler.fit(x_train)
+
+# scaler_train
+
+# scaler_train.mean_
+
+pp =scaler_train.transform(x_train)
+
+# pp
+
+# rf
+
+params_rf = {
+    'bootstrap': [True],
+    'max_depth': [14, 40, 60, 100],
+    'n_estimators': [14, 35, 60, 85]
+}
+
+
+
+rf_tune = GridSearchCV(estimator = rf, param_grid = params_rf, cv=10, n_jobs = -1, verbose = 2)
+
+rf_tune.fit(pp, y_train)
+
+print(rf_tune.best_params_)
+
+rf2 = RandomForestClassifier(n_estimators=85, max_depth=60)
+
+rf2.fit(pp, y_train)
+
+y_test_pred_rf_tune = rf2.predict(scaler.transform(x_test))
+
+test_accuracy_rf_tune = round(accuracy_score(y_test, y_test_pred_rf_tune.round()), 2)
+
+# print(test_accuracy_rf_tune)
+print(round(rf_tune.best_score_, 2))
 
 
 # ############################################ Support Vector Machine ###################################################
@@ -115,6 +153,25 @@ train_accurac_svc = round(accuracy_score(y_train, y_train_pred_svc.round()), 2)
 # TODO: Tune the hyper-parameters 'C' and 'kernel' (use rbf and linear).
 #       Print the best params, using .best_params_, and print the best score, using .best_score_.
 # XXX
+
+params_svc = {'kernel':('linear', 'rbf'), 'C':[0.001, 0.01, 0.1, 1, 10]}
+
+svc_tune = GridSearchCV(estimator = svc, param_grid = params_svc, cv=10, n_jobs = -1, verbose = 2)
+
+svc_tune.fit(pp, y_train)
+
+print(svc_tune.best_params_)
+
+svc2 = SVC(C=10, kernel='rbf')
+
+svc2.fit(pp, y_train)
+
+y_test_pred_svc_tune = svc2.predict(scaler.transform(x_test))
+
+test_accuracy_svc_tune = round(accuracy_score(y_test, y_test_pred_svc_tune.round()), 2)
+# print(test_accuracy_svc_tune)
+
+print(round(svc_tune.best_score_, 2))
 
 
 # ######################################### Principal Component Analysis #################################################
