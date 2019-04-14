@@ -173,6 +173,25 @@ test_accuracy_svc_tune = round(accuracy_score(y_test, y_test_pred_svc_tune.round
 
 print(round(svc_tune.best_score_, 2))
 
+###################### For Q3.3 & Q3.4##################
+
+# svc_tune.cv_results_['mean_fit_time'][9]
+
+# svc_tune.cv_results_['mean_train_score'][9]
+
+# svc_tune.cv_results_['mean_test_score'][9]
+
+# important_features_dict = {}
+# for x,i in enumerate(rf.feature_importances_):
+#     important_features_dict[x]=i
+
+
+# important_features_list = sorted(important_features_dict,
+#                                  key=important_features_dict.get,
+#                                  reverse=True)
+
+
+# print('Most important features: %s', important_features_list)
 
 # ######################################### Principal Component Analysis #################################################
 # XXX
