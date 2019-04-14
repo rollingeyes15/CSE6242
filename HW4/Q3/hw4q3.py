@@ -18,7 +18,7 @@ from sklearn.decomposition import PCA
 # XXX
 # TODO: Read in all the data. Replace the 'xxx' with the path to the data set.
 # XXX
-data = pd.read_csv('xxx')
+data = pd.read_csv('eeg_dataset.csv')
 
 # Separate out the x_data and y_data.
 x_data = data.loc[:, data.columns != "y"]
@@ -38,6 +38,18 @@ random_state = 100
 # TODO: Create a LinearRegression classifier and train it.
 # XXX
 
+x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=0.30, random_state=random_state, shuffle=True)
+
+regr = LinearRegression()
+
+# Train the model using the training sets
+regr.fit(x_train, y_train)
+
+# Make predictions using the testing set
+y_test_pred = regr.predict(x_test)
+# Make predictions using the testing set
+y_train_pred = regr.predict(x_train)
+
 
 # XXX
 # TODO: Test its accuracy (on the training set) using the accuracy_score method.
@@ -45,6 +57,8 @@ random_state = 100
 # Note: Round the output values greater than or equal to 0.5 to 1 and those less than 0.5 to 0. You can use y_predict.round() or any other method.
 # XXX
 
+test_accuracy = round(accuracy_score(y_test, y_test_pred.round()), 2)
+train_accuracy = round(accuracy_score(y_train, y_train_pred.round()), 2)
 
 # ############################################### Random Forest Classifier ##############################################
 # XXX
@@ -57,6 +71,12 @@ random_state = 100
 # TODO: Test its accuracy on the test set using the accuracy_score method.
 # XXX
 
+rf = RandomForestClassifier()
+rf.fit(x_train, y_train)
+y_test_pred_rf = rf.predict(x_test)
+y_train_pred_rf = rf.predict(x_train)
+test_accuracy_rf = round(accuracy_score(y_test, y_test_pred_rf.round()), 2)
+train_accurac_rf = round(accuracy_score(y_train, y_train_pred_rf.round()), 2)
 
 # XXX
 # TODO: Determine the feature importance as evaluated by the Random Forest Classifier.
@@ -84,6 +104,12 @@ random_state = 100
 # TODO: Test its accuracy on the test set using the accuracy_score method.
 # XXX
 
+svc = SVC()
+svc.fit(x_train, y_train)
+y_test_pred_svc = svc.predict(x_test)
+y_train_pred_svc = svc.predict(x_train)
+test_accuracy_svc = round(accuracy_score(y_test, y_test_pred_svc.round()), 2)
+train_accurac_svc = round(accuracy_score(y_train, y_train_pred_svc.round()), 2)
 
 # XXX
 # TODO: Tune the hyper-parameters 'C' and 'kernel' (use rbf and linear).

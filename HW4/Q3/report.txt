@@ -8,14 +8,14 @@
 **********************************************
 Q 3.1
 
-Linear Regression - Training Accuracy: 
-Linear Regression - Testing Accuracy: 
+Linear Regression - Training Accuracy: 0.64
+Linear Regression - Testing Accuracy: 0.64
 
-Random Forest - Training Accuracy: 
-Random Forest - Testing Accuracy: 
+Random Forest - Training Accuracy: 1.00
+Random Forest - Testing Accuracy: 0.90
 
-SVM - Training Accuracy: 
-SVM - Testing Accuracy: 
+SVM - Training Accuracy: 0.54
+SVM - Testing Accuracy: 1.00
 
 **********************************************
 
